@@ -1,7 +1,6 @@
-# Claudio Gloria  
+# Claudio Gioria  
 ### QA Automation Engineer  
-📍 Buenos Aires, Argentina | 📧 crgioria@gmail.com | 📞 +54 11 2391 8161  
-🔗 [GitHub](https://github.com/cgloria) | [LinkedIn](https://www.linkedin.com/in/claudio-gloria-7049a0a)  
+[LinkedIn](https://www.linkedin.com/in/claudio-gloria-7049a0a)  
 
 ---
 
