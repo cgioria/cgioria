@@ -6,9 +6,10 @@
 
 ## 🚀 Professional Summary  
 Senior **QA Automation Engineer** with **6+ years** of experience in:  
-✔ **Web/API Automation** (Selenium, Cypress, Playwright)  
+✔ **Web, API and Mobile Test Automation** (Selenium w/Python/C#, Cypress (JS), Playwright (JS/TS), Appium, SpecFlow, Behave, Cucumber, SOAPUI, Postman, E2E, Regression, Smoke, Integration, Performance(JMETER)). 
 ✔ **BDD Framework Design** (Gherkin, SpecFlow, Behave)  
 ✔ **CI/CD Integration** (Azure DevOps, GitLab)  
+✔ **AI/LLM Integration** (AI-driven testing. Refactoring code tools. AI integration with Copilot, DeepSeek, Gemini, Pinecone,OpenAI, DeepSeek. Sentence-Transformers Python libraries with text analysis models. ) 
 ✔ **Cross-Industry Testing** (Banking, ERP, Pharma, Manufacturing)  
 
 ---
