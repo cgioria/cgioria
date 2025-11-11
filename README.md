@@ -1,11 +1,11 @@
 # Claudio Gioria  
-### QA Automation Engineer  
+### QA Automator+AI | Playwright | Azure CI/CD | Cypress | Selenium | Appium | Postman | Jira Xray | LLM: AI-driven testing. AI code refactoring. AI integration.AI text analysis models implementation. 
 [LinkedIn](https://www.linkedin.com/in/claudio-gloria-7049a0a)  
 
 ---
 
 ## 🚀 Professional Summary  
-Senior **QA Automation Engineer** with **8+ years** of experience in:  
+Senior **QA Automation Engineer** with **6+ years** of experience in:  
 ✔ **Web/API Automation** (Selenium, Cypress, Playwright)  
 ✔ **BDD Framework Design** (Gherkin, SpecFlow, Behave)  
 ✔ **CI/CD Integration** (Azure DevOps, GitLab)  
