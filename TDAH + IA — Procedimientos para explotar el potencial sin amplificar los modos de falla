@@ -1,0 +1,555 @@
+# TDAH + IA — Procedimientos para explotar el potencial sin amplificar los modos de falla
+
+Guía agnóstica de stack, dominio y herramienta. Aplica a cualquier asistente de IA
+(agente de código, chat, copiloto) y a cualquier tipo de trabajo técnico. Versión
+general del análisis aplicado a un proyecto concreto; acá no hay nada específico de
+un lenguaje, framework ni cliente. Los diagramas están en Mermaid: se renderizan en
+GitHub y en editores con soporte Mermaid (en VS Code, con la extensión de preview).
+
+---
+
+## 0. Tesis: la IA es un amplificador, no un corrector
+
+La narrativa de "el TDAH es un superpoder con IA" es media verdad presentada como
+completa. La parte sólida es real: la IA remueve la barrera más concreta del TDAH en
+trabajo cognitivo —la memoria de trabajo— y baja la fricción de empezar y de pedir
+ayuda. La parte que la narrativa omite: la IA le da potencia a la estructura cognitiva
+que ya tenés. Si esa estructura incluye perseguir novedad, no terminar y saltarse la
+verificación —rasgos reales del TDAH— la IA los amplifica con la misma eficiencia con
+que amplifica el hiperfoco y la visión lateral.
+
+**El mecanismo real no es "hacés muchas cosas a la vez".** Tu atención sigue siendo
+una sola; el cerebro humano no procesa en paralelo, conmuta rápido. Lo que cambió es
+que la IA **baja casi a cero el costo de reentrada** a una tarea de la que te fuiste:
+retiene el estado, resume dónde quedaste, reconstruye el contexto. El entorno dejó de
+penalizar la conmutación. Sobre eso —no sobre el "multitasking"— hay que construir.
+
+**Consecuencia:** el saldo neto depende enteramente de los guardarraíles. Los prompts
+de "potenciá mi productividad" no mueven la aguja. La mueven los procedimientos
+aburridos contra los modos de falla. Por eso funcionan: porque son aburridos y nadie
+los pone solo.
+
+```mermaid
+flowchart TD
+    IA["IA: amplificador, no corrector<br/>baja el costo de reentrada"]
+    IA --> F["FORTALEZAS amplificadas<br/>hiperfoco, vision lateral, patrones"]
+    IA --> M["MODOS DE FALLA amplificados<br/>no terminar, perseguir novedad, no verificar"]
+    F --> Gate{"Hay guardarrailes<br/>+ reglas del asistente?"}
+    M --> Gate
+    Gate -->|"presentes"| POS["Productividad real:<br/>cosas que cierran"]
+    Gate -->|"ausentes"| NEG["Dispersion con IA:<br/>cosas a medias"]
+```
+
+```
+            IA: amplificador, no corrector
+             (baja el costo de reentrada)
+                         |
+          +--------------+--------------+
+          v                             v
+    FORTALEZAS                   MODOS DE FALLA
+    amplificadas                 amplificados
+    (hiperfoco,                  (no terminar,
+     vision lateral,              novedad,
+     patrones)                    no verificar)
+          |                             |
+          +--------------+--------------+
+                         v
+            +---------------------------+
+            | Hay guardarrailes +       |
+            | reglas del asistente?     |
+            +---------------------------+
+               /                     \
+          presentes               ausentes
+              v                       v
+    Productividad real        Dispersion con IA
+    (cosas que cierran)       (cosas a medias)
+```
+
+La IA amplifica las dos ramas con la misma eficiencia. Los guardarraíles son la
+compuerta que decide el signo del resultado, no la herramienta.
+
+---
+
+## 1. La separación que ordena todo el documento
+
+Tres categorías que NO son lo mismo y se manejan distinto:
+
+- **Fortaleza a potenciar** — un rasgo cognitivo que la IA amplifica en la dirección
+  correcta. Se trabaja con procedimientos que le dan cauce.
+- **Guardarraíl** — un compromiso del humano para manejar sus propios modos de falla.
+  Lo sostiene una decisión consciente, no la herramienta.
+- **Regla de operación del asistente** — un comportamiento por defecto que le exigís a
+  la IA para que no repita errores que comete sola. Lo sostiene la configuración del
+  agente (instrucciones de sistema, prompt base), no tu fuerza de voluntad.
+
+Confundirlas es el error más común: tratar un guardarrail como si la herramienta lo
+fuera a poner sola, o esperar que tu disciplina supla un comportamiento que deberías
+haber configurado en el asistente.
+
+```mermaid
+flowchart TD
+    T["Manejar el trabajo con IA"]
+    T --> Fo["FORTALEZA a potenciar"]
+    T --> Gu["GUARDARRAIL"]
+    T --> Re["REGLA DE OPERACION del asistente"]
+    Fo -.se sostiene con.-> Fos["Procedimientos<br/>(Parte I)"]
+    Gu -.se sostiene con.-> Gus["Decision consciente<br/>del humano"]
+    Re -.se sostiene con.-> Res["Configuracion del agente<br/>(prompt base, reglas)"]
+```
+
+```
+              Manejar el trabajo con IA
+                        |
+      +-----------------+------------------+
+      v                 v                  v
+  FORTALEZA         GUARDARRAIL     REGLA DE OPERACION
+  a potenciar                        del asistente
+      |                 |                  |
+   se sostiene       se sostiene       se sostiene
+   con:              con:              con:
+      v                 v                  v
+  Procedimientos   Decision          Configuracion
+  (Parte I)        consciente        del agente
+                   del humano        (prompt base)
+```
+
+---
+
+# PARTE I — Potenciar las fortalezas
+
+Cinco fortalezas frecuentes en el perfil TDAH y un procedimiento concreto para cada
+una. La fortaleza no es la técnica; la técnica le da cauce a algo que ese cerebro ya
+hace naturalmente.
+
+## 2.1 Visión del sistema completo antes de ejecutar
+
+Muchos perfiles TDAH ven el grafo de dependencias entero antes de tocar una pieza:
+qué bloquea a qué, qué es cimiento y qué es hoja. Es procesamiento natural, no una
+metodología aprendida.
+
+**Lo que produce:** órdenes de trabajo que evitan bloqueos, componentes que no se
+reimplementan, decisiones que escalan. Horas de análisis que ahorran días de retrabajo.
+
+**Procedimiento — mapa de criticidad por desbloqueo:**
+Ante cualquier problema no trivial, antes de ejecutar, escribí (aunque sea media
+página) el grafo del problema:
+
+1. Listá las piezas y qué depende de qué (un DAG informal alcanza).
+2. Para cada pieza, calculá su **criticidad = cuántas otras piezas quedan bloqueadas
+   si no existe**, no cuán difícil parece construirla.
+3. Construí primero lo de mayor criticidad —el cimiento—, aunque cubra poco por sí
+   mismo. Empezar por lo que *parece fácil* casi siempre deja trabado: suele depender
+   de una precondición que no construiste.
+
+Pedile a la IA que te ayude a armar y validar ese mapa antes de generar nada. Es la
+sesión donde tu fortaleza rinde más.
+
+```mermaid
+flowchart TD
+    Cim["CIMIENTO<br/>criticidad maxima:<br/>si no existe, todo queda bloqueado"]
+    Cim --> B["Pieza intermedia B"]
+    Cim --> C["Pieza intermedia C"]
+    B --> D["Hoja D"]
+    B --> E["Hoja E"]
+    C --> Fz["Hoja F"]
+    classDef foundation fill:#1f6feb,color:#fff,stroke:#0b3a8c,stroke-width:2px;
+    class Cim foundation;
+```
+
+```
+              [ CIMIENTO ]        criticidad maxima:
+               /        \         si no existe, todo
+              v          v        queda bloqueado
+          Pieza B     Pieza C
+           /   \         |
+          v     v        v
+       Hoja D Hoja E   Hoja F
+
+   flecha = "habilita / desbloquea"
+   se construye del cimiento (arriba) hacia las hojas
+```
+
+La flecha es "habilita / desbloquea". Criticidad de un nodo = cuántos descendientes
+quedan bloqueados si no existe, no su dificultad aparente. Se construye del cimiento
+hacia las hojas: empezar por una hoja (lo que *parece* fácil) suele dejar trabado
+porque depende de un cimiento que no construiste.
+
+## 2.2 Reconocimiento de patrones no obvios bajo presión
+
+Las mejores soluciones de este perfil emergen resolviendo un problema concreto, no
+buscando en la documentación: una estructura que nadie escribió, el atajo que el stack
+no documenta. Aparecen de ver la forma del problema.
+
+**El riesgo:** el patrón emerge en el momento y, si no se captura, se pierde en el
+historial de la sesión.
+
+**Procedimiento — captura en caliente:**
+Cuando aparece una solución no obvia, antes de seguir, documentala en el lugar
+correcto y en el formato correcto:
+
+- Patrón de bajo nivel (cómo resolver X clase de problema) → guía de "lecciones
+  aprendidas" del proyecto.
+- Patrón de un flujo o componente → cerca del código que lo usa (docstring + nota).
+- Decisión de arquitectura → registro de decisiones (un ADR, o una línea en el doc de
+  diseño con el porqué).
+- Patrón transversal a varios proyectos → tu base de conocimiento personal.
+
+La IA es buena taquígrafa: "acabo de resolver X con Y, ayudame a formalizarlo en el
+formato correcto antes de seguir". Cuesta dos minutos y evita redescubrir lo mismo en
+tres meses.
+
+## 2.3 Hiperfoco como motor de calidad
+
+El hiperfoco sostiene el problema entero en la cabeza durante un período largo. Eso es
+lo que permite decisiones de diseño correctas a largo plazo, no solo para el caso
+inmediato. No se puede forzar; sí se puede encauzar cuando aparece. El error es dejar
+que el hiperfoco elija su propio objeto —a veces es el rabbit hole equivocado.
+
+**Procedimiento — sesiones tipadas:**
+Antes de entrar en modo copiloto, declará qué tipo de sesión es. Cada tipo usa el
+hiperfoco distinto:
+
+| Tipo de sesión | Objeto | Cómo arranca | Guardarrail activo |
+|---|---|---|---|
+| **Diseño / análisis** (hiperfoco ideal) | Diseñar una arquitectura, mapear un problema, generar el plan | Cuando la cabeza "engancha" y los conceptos se conectan solos. Copiloto total, IA como ejecutor | Ninguno especial: es la zona de fortaleza |
+| **Implementación** (hiperfoco acotado) | Una pieza específica: una función, un módulo, un test | Con la definición de "terminado" escrita antes | Un solo frente; vigilar la sobre-ingeniería |
+| **Mantenimiento** (sin hiperfoco) | Correr lo que ya existe, actualizar estado, resolver un fallo conocido | No requerir motivación: pedir a la IA "la tarea más pequeña disponible" y dar el paso mínimo | Definición de terminado verificable |
+| **Exploratoria** (hiperfoco libre, con límite) | Investigar algo nuevo (una librería, una técnica, una idea) | Con timebox explícito (45-90 min). Al final: un documento de una página con hallazgos | El timebox. Si no produce el doc, la sesión no cuenta |
+
+Riesgo del hiperfoco en implementación: sobre-ingenierizar. Si la solución empezó
+simple y creció mucho, parar y preguntar si hay una más simple. La sesión exploratoria
+es donde nacen las mejores ideas —no suprimirla, encuadrarla.
+
+```mermaid
+flowchart TD
+    S["Voy a arrancar un bloque de trabajo"]
+    S --> Q{"Hay hiperfoco<br/>disponible?"}
+    Q -->|"no"| Mant["MANTENIMIENTO<br/>pedir el paso minimo,<br/>no requerir motivacion"]
+    Q -->|"si"| Q2{"Cual es el objeto?"}
+    Q2 -->|"disenar / analizar"| Dis["DISENO<br/>copiloto total, sin friccion"]
+    Q2 -->|"una pieza concreta"| Imp["IMPLEMENTACION<br/>definir terminado + un solo frente"]
+    Q2 -->|"investigar algo nuevo"| Exp["EXPLORATORIA<br/>timebox 45-90 min + doc de 1 pagina"]
+```
+
+```
+   Voy a arrancar un bloque de trabajo
+            |
+   Hay hiperfoco disponible?
+   |
+   +-- NO --> MANTENIMIENTO (paso minimo, sin requerir motivacion)
+   |
+   +-- SI --> Cual es el objeto?
+              |
+              +-- disenar / analizar ----> DISENO
+              |                            (copiloto total, sin friccion)
+              |
+              +-- una pieza concreta -----> IMPLEMENTACION
+              |                            (un solo frente + terminado)
+              |
+              +-- investigar algo nuevo --> EXPLORATORIA
+                                           (timebox 45-90 min + doc 1 pag)
+```
+
+## 2.4 Baja tolerancia a la fricción → automatización como motor
+
+La intolerancia a tareas repetitivas no es solo un problema: es lo que genera
+herramientas. Cada vez que algo es tedioso, la respuesta puede ser automatizarlo —y
+con IA el costo de hacerlo se desplomó.
+
+**Lo que produce:** tooling que beneficia a todo el equipo y baja el costo de
+mantenimiento. La fricción personal se convierte en infraestructura compartida.
+
+**Procedimiento — backlog de fricción:**
+Mantené una lista (un solo archivo) de tareas del tipo "esto es repetitivo / tedioso /
+me frena". No la ignores ni la aceptes: registrala. Cuando aparece hiperfoco sin
+objeto claro, en vez de caer en un rabbit hole random, revisá el backlog y atacá el
+ítem de mayor impacto.
+
+El backlog de fricción es el **input** de las sesiones exploratorias; las sesiones
+exploratorias producen las herramientas. El ciclo es deliberado, no accidental.
+
+```mermaid
+flowchart LR
+    Fr["Friccion:<br/>tarea repetitiva o tediosa"] --> Bk["Backlog de friccion<br/>(un archivo)"]
+    Bk --> Hf["Hiperfoco sin objeto:<br/>atacar el item de mayor impacto"]
+    Hf --> Ex["Sesion exploratoria"]
+    Ex --> To["Herramienta / automatizacion"]
+    To -->|"reduce"| Fr
+```
+
+```
+   Friccion (tarea repetitiva o tediosa)
+        |                          ^
+        v                          |
+   Backlog de friccion             |
+        |                          |
+        v                          | reduce
+   Hiperfoco sin objeto            |
+   (item de mayor impacto)         |
+        |                          |
+        v                          |
+   Sesion exploratoria             |
+        |                          |
+        v                          |
+   Herramienta / automatizacion ---+
+```
+
+## 2.5 Conexiones laterales entre dominios
+
+Las mejores soluciones a veces vienen de aplicar un concepto de otro dominio al
+problema de hoy. Eso no le pasa a quien solo piensa dentro de su disciplina, y no pasa
+solo: requiere espacio explícito.
+
+**Procedimiento — sesión "qué más aplica acá":**
+Una vez por ciclo de trabajo, antes de empezar a implementar:
+
+> "Mirá el estado actual del trabajo. ¿Hay algún concepto, patrón o herramienta de
+> otro dominio que podría aplicarse a algún problema abierto? No busques soluciones —
+> buscá analogías."
+
+No es un ejercicio creativo vago. Tiene objeto concreto (los problemas abiertos) y
+límite (no irse a cualquier lado). La IA acá sirve para traer referencias de dominios
+que vos no frecuentás.
+
+---
+
+# PARTE II — Contener los modos de falla
+
+La otra mitad. La IA toca cada modo de falla del TDAH en la dirección equivocada, y
+hay un set de modos de falla del propio asistente que se suman. Acá van los dos, con
+sus reglas y guardarraíles.
+
+## 3. Modos de falla del humano (amplificados por la IA)
+
+| Modo de falla TDAH | Cómo lo amplifica la IA |
+|---|---|
+| Dificultad para terminar | Empezar algo nuevo ahora cuesta un prompt; la fricción que antes te forzaba a cerrar desapareció |
+| Búsqueda de novedad | "Estoy orquestando" se vuelve excusa para no cerrar nada |
+| Time blindness | Un rabbit hole con copiloto se siente como minutos |
+| Saltarse la verificación | La IA produce código plausible más rápido de lo que podés revisarlo con atención |
+| Función ejecutiva débil | Coordinar varios frentes con IA multiplica decisiones de priorización: carga la función comprometida, no la rodea |
+
+### Guardarrail 1 (G1) — Límite de WIP y cierre antes de pivotar
+
+Cada pivote individual se justifica; el costo acumulado —varios frentes abiertos, sin
+estado documentado— no es visible en el momento de pivotar. Es efecto de la percepción
+del tiempo y de la resistencia a las tareas administrativas de baja dopamina.
+
+**Regla:** no abrir un frente nuevo hasta cerrar o documentar uno. Máximo 2-3 activos.
+Antes de cambiar de frente, dejar por escrito: qué quedó terminado, qué quedó a medias,
+bloqueante si aplica, y el primer paso para retomar.
+
+```
+"Tengo estos frentes abiertos: [A], [B], [C]. Antes de arrancar algo nuevo,
+decime cuál está más cerca de 'terminado' y ayudame a cerrarlo primero."
+```
+
+### Guardarrail 2 (G2) — Un frente activo + definición de "terminado" antes de empezar
+
+La IA elimina la fricción de generar análisis y documentos. Los docs son fáciles. El
+riesgo es que producir análisis se sienta como avance sin serlo, mientras lo que
+realmente cuenta —el entregable funcionando— no cierra.
+
+**Regla:** antes de arrancar cualquier trabajo, responder "¿qué significa terminado
+hoy?" con una condición verificable, no con "avanzar en X".
+
+```
+"Antes de arrancar con [X], definamos qué significa 'terminado' acá: qué pasa,
+qué queda documentado, qué NO entra en el alcance. Escribilo como checklist."
+```
+
+### Guardarrail 3 — Verificación como ritual no salteable
+
+El paso de revisar lo que generó la IA es la tarea de baja-dopamina-alta-importancia
+que el TDAH evita, y es justo donde se cuelan los bugs.
+
+```
+"Generaste esto. Antes de darlo por bueno, hacé de revisor escéptico:
+1. ¿Qué asumiste que yo no verifiqué?
+2. ¿Qué caso límite no está cubierto?
+3. ¿Qué se rompe si esto va a producción?
+No me dejes seguir hasta responderlo."
+```
+
+### Guardarrail 4 — Timeboxing contra el time blindness
+
+```
+"Voy a dedicarle 45 minutos a [X]. Cuando lleguemos a un punto natural de corte,
+avisame y resumí el estado. No me dejes caer en un rabbit hole sin avisar."
+```
+
+### Guardarrail 5 — Registro de deuda
+
+```
+"Junta todo lo que marqué como 'lo arreglo después' o 'TODO' en esta sesión
+y armá una lista. Esa lista es mi deuda real — no la perdamos."
+```
+
+## 4. Reglas de operación del asistente
+
+Comportamientos que la IA comete sola y hay que prevenir por configuración (no por
+disciplina humana). Estos son patrones observados, transferibles a cualquier agente:
+
+- **No verifica precondiciones ya documentadas.** Implementa algo cuyo bloqueante
+  estaba escrito, porque no leyó el estado.
+  *Regla:* antes de actuar sobre una tarea, leer el doc de estado/contexto relevante
+  y confirmar que no hay bloqueante. Si lo hay, comunicarlo y no proceder. Sin que se
+  lo pidan.
+
+- **Destruye contenido al editar.** Reescribe un archivo entero y borra contenido
+  irreemplazable (notas, pasos originales, comentarios con contexto).
+  *Regla:* ante un archivo con contenido que no se puede regenerar, leer el actual y
+  preservarlo; modificar lo mínimo necesario, nunca reescribir en bloque.
+
+- **Declara "hecho" sin verificar.** Afirma que algo funciona sin correrlo.
+  *Regla:* después de un cambio, ejecutar la verificación correspondiente y mostrar el
+  resultado, no solo describir lo que debería pasar.
+
+- **Confía en el estado auto-declarado.** Cita números o estados desde un doc sin
+  contrastarlos con la fuente de verdad.
+  *Regla:* verificar contra la fuente (el código, la corrida real, el dato crudo)
+  antes de afirmar métricas o estados.
+
+- **Recupera de forma destructiva.** Usa atajos irreversibles (descartar todo, resetear)
+  para deshacer, cuando había una vía reversible.
+  *Regla:* preferir el deshacer reversible y acotado; no usar operaciones destructivas
+  para "limpiar" sin confirmación.
+
+- **Tapa el problema con un parche de baja fricción.** Mete una espera fija, un
+  reintento o un try/except vacío para que "pase", en vez de encontrar la causa.
+  *Regla:* ante un fallo, identificar la causa raíz antes de cambiar nada; no estabilizar
+  con parches que ocultan el problema.
+
+Codificá estas reglas en las instrucciones base del asistente (system prompt, archivo
+de configuración del agente, reglas del proyecto), no en tu memoria.
+
+## 5. Lo que la IA no resuelve
+
+- **Terminar.** La IA acelera empezar. Los guardarraíles frenan parcialmente la
+  acumulación de frentes, pero la decisión de cerrar antes de abrir es del humano.
+- **Hiperfoco en el pozo equivocado.** La IA acelera en cualquier dirección que tenga
+  foco, incluida la incorrecta. La tipificación de sesiones es la defensa, y requiere
+  una decisión consciente *antes* de entrar en modo copiloto.
+
+Ninguna de las dos se delega. Son el núcleo irreductible del trabajo del humano.
+
+---
+
+## 6. La palanca de mayor retorno — la tabla de estado
+
+El mecanismo central (sección 0) es que la IA baja el costo de reentrada. La forma más
+barata de potenciarlo: una **tabla de estado viva al tope de cada documento o frente
+de trabajo**, actualizada al final de cada sesión.
+
+```markdown
+## Estado actual — [fecha]
+
+| Frente | Estado | Próximo paso |
+|---|---|---|
+| Pieza A | COMPLETA | — |
+| Pieza B | BLOQUEADA — [razón] | esperar [condición] |
+| Pieza C | PENDIENTE | [primer paso concreto] |
+```
+
+Baja el costo de reentrada de "releer todo para recordar dónde estaba" a "leer una
+tabla". Cuando un frente está bloqueado, un callout al tope de su sección:
+
+```markdown
+> BLOQUEADO — [fecha]: [razón]. Condición de desbloqueo: [qué tiene que pasar].
+```
+
+Es la mejora más aburrida del documento y la de mayor palanca: convierte el rasgo más
+costoso del TDAH (perder el hilo al conmutar) en algo que la IA reconstruye en
+segundos.
+
+```mermaid
+flowchart LR
+    subgraph Sin["Sin tabla de estado"]
+    direction TB
+    A1["Vuelvo a la tarea"] --> A2["Releer todo para<br/>recordar donde estaba"] --> A3["Costo de reentrada ALTO"]
+    end
+    subgraph Con["Con tabla de estado al tope"]
+    direction TB
+    B1["Vuelvo a la tarea"] --> B2["Leer una tabla"] --> B3["Costo de reentrada BAJO"]
+    end
+```
+
+```
+   Sin tabla de estado            Con tabla de estado al tope
+   -------------------            ---------------------------
+   Vuelvo a la tarea              Vuelvo a la tarea
+        |                              |
+        v                              v
+   Releer todo para               Leer una tabla
+   recordar donde estaba              |
+        |                              v
+        v                         Costo de reentrada BAJO
+   Costo de reentrada ALTO
+```
+
+---
+
+## 7. Flujo diario
+
+```
+ARRANQUE
+  - "¿Dónde quedé? Acá el estado: [tabla de estado]"
+  - Definir 'terminado' para la tarea principal del día (G2)
+  - Primer paso mínimo
+
+DURANTE EL DÍA (con límite de WIP de 2-3 frentes)
+  - Declarar el tipo de sesión antes de cada bloque (diseño / impl / mant / explor)
+  - Antes de cada salto: "Resumime el estado y el punto de retorno"
+  - Antes de abrir frente nuevo: "¿Hay algo que cerrar primero?" (G1)
+
+CUANDO APARECE EL HIPERFOCO
+  - Chequeo de 10 segundos: "¿esto es la prioridad o es un rabbit hole?"
+  - Si es prioridad: modo copiloto, cero fricción
+  - Timebox igual (G4)
+
+ANTES DE DAR ALGO POR HECHO
+  - Ritual de verificación (G3) — no salteable
+
+CIERRE
+  - "Qué cerramos, qué quedó a medias, qué riesgos hay"
+  - Actualizar la tabla de estado y el registro de deuda (G5)
+  - Ese resumen es el arranque de mañana
+```
+
+Visto como grafo de decisiones, con las compuertas donde actúan los guardarraíles:
+
+```mermaid
+flowchart TD
+    Arr["ARRANQUE<br/>leer tabla de estado<br/>definir terminado (G2)"]
+    Arr --> Trab["Trabajar en UN frente"]
+    Trab --> Ev{"Que pasa?"}
+    Ev -->|"cambio de frente"| WIP{"Algo que cerrar primero? (G1)"}
+    WIP -->|"si"| Cerrar["Cerrar o documentar estado"]
+    Cerrar --> Trab
+    WIP -->|"no, hay menos de 3 frentes"| Trab
+    Ev -->|"aparece hiperfoco"| RH{"Prioridad o rabbit hole?"}
+    RH -->|"rabbit hole"| Trab
+    RH -->|"prioridad"| Cop["Copiloto + timebox (G4)"]
+    Cop --> Trab
+    Ev -->|"voy a dar algo por hecho"| Ver["Ritual de verificacion (G3)"]
+    Ver --> Trab
+    Ev -->|"fin del dia"| Cie["CIERRE<br/>actualizar tabla + registro de deuda (G5)"]
+```
+
+---
+
+## 8. Resumen — qué es de quién
+
+| Categoría | De quién | Cómo se sostiene |
+|---|---|---|
+| Fortalezas a potenciar | El perfil TDAH (activo) | Procedimientos que les dan cauce (Parte I) |
+| Modos de falla del humano | El perfil TDAH (pasivo) | Guardarraíles: compromiso consciente del humano (G1-G5) |
+| Errores del asistente | La IA | Reglas de operación en la configuración del agente |
+| El mecanismo (bajo costo de reentrada) | La herramienta | La tabla de estado lo explota |
+| Terminar / no caer en el pozo equivocado | El humano, irreductible | No se delega |
+
+---
+
+*Documento de trabajo, agnóstico. Iterá sobre los guardarraíles y las reglas a medida
+que descubras tus propios patrones de falla — son personales. La tesis no cambia: la
+IA amplifica lo que ya sos. Los guardarraíles deciden el signo.*
